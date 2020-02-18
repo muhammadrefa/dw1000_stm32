@@ -4,14 +4,6 @@
  *  Created on: 11 Feb 2020
  *      Author: refa
  *
- *  TODO :
- *  - Get/Set Extended Unique ID
- *  - Get/Set System Configuration
- *  - Get System Time Counter
- *  - Get/Set Transmit Frame Control
- *  - Get/Set Transmit Data Buffer
- *  - and so on...
- *
  */
 
 #ifndef DW1000_H_
@@ -176,8 +168,34 @@ typedef enum {
 } dw1000_sys_status_bit_t;
 
 typedef enum {
-  DW1000_PRF_16MHZ = 0x01,
-  DW1000_PRF_64MHZ = 0x10
+  DW1000_SYS_CFG_FFEN = 0,
+  DW1000_SYS_CFG_FFBC,
+  DW1000_SYS_CFG_FFAB,
+  DW1000_SYS_CFG_FFAD,
+  DW1000_SYS_CFG_FFAA,
+  DW1000_SYS_CFG_FFAM,
+  DW1000_SYS_CFG_FFAR,
+  DW1000_SYS_CFG_FFA4,
+  DW1000_SYS_CFG_FFA5,  // 8
+  DW1000_SYS_CFG_HIRQ_POL,
+  DW1000_SYS_CFG_SPI_EDGE,
+  DW1000_SYS_CFG_DIS_FCE,
+  DW1000_SYS_CFG_DIS_DRXB,
+  DW1000_SYS_CFG_DIS_PHE,
+  DW1000_SYS_CFG_DIS_RSDE,
+  DW1000_SYS_CFG_INIT2F,
+  DW1000_SYS_CFG_PHR_MODE,  // 16
+  DW1000_SYS_CFG_DIS_STXP = 18,
+  DW1000_SYS_CFG_RXM110K = 22,
+  DW1000_SYS_CFG_RXWTOE = 28,
+  DW1000_SYS_CFG_RXAUTR,
+  DW1000_SYS_CFG_AUTOACK,
+  DW1000_SYS_CFG_AACKPEND
+} dw1000_sys_cfg_bit_t;
+
+typedef enum {
+  DW1000_PRF_16MHZ = 0b01,
+  DW1000_PRF_64MHZ = 0b10
 } dw1000_prf_t;
 
 void dw1000_SetBit(uint8_t *data, uint8_t bitnum, uint8_t value);
@@ -195,11 +213,16 @@ uint32_t dw1000_GetReceiverTimeTrackingInterval(dw1000_HandleTypeDef *dw1000);
 void dw1000_ClearAllStatus(dw1000_HandleTypeDef *dw1000);
 
 void dw1000_IdleMode(dw1000_HandleTypeDef *dw1000);
+
 void dw1000_StartTransmit(dw1000_HandleTypeDef *dw1000, uint16_t length, uint8_t use_crc);
 void dw1000_ClearTransmitStatus(dw1000_HandleTypeDef *dw1000);
-void dw1000_SetDataToTransmit(dw1000_HandleTypeDef *dw1000, uint8_t *data, uint16_t length, uint8_t use_crc);
 
 void dw1000_StartReceive(dw1000_HandleTypeDef *dw1000, uint8_t use_crc);
 void dw1000_ClearReceiveStatus(dw1000_HandleTypeDef *dw1000);
+void dw1000_ReceiveAutoEnable(dw1000_HandleTypeDef *dw1000, uint8_t val);
+
+void dw1000_SetDataToTransmit(dw1000_HandleTypeDef *dw1000, uint8_t *data, uint16_t length, uint8_t use_crc);
+uint16_t dw1000_GetDataReceivedLength(dw1000_HandleTypeDef *dw1000, uint8_t use_crc);
+void dw1000_GetDataReceived(dw1000_HandleTypeDef *dw1000, uint8_t* data, uint8_t use_crc);
 
 #endif /* DW1000_H_ */

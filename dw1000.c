@@ -167,3 +167,24 @@ void dw1000_ClearReceiveStatus(dw1000_HandleTypeDef *dw1000) {
   dw1000_SetBit(sys_status, DW1000_SYS_STATUS_RXRFSL, 1);
   dw1000_WriteData(dw1000, DW1000_SYS_STATUS, sys_status, DW1000_SYS_STATUS_LEN);
 }
+
+void dw1000_ReceiveAutoEnable(dw1000_HandleTypeDef *dw1000, uint8_t val) {
+  uint8_t sys_config[DW1000_SYS_CFG_LEN];
+  dw1000_ReadData(dw1000, DW1000_SYS_CFG, sys_config, DW1000_SYS_CFG_LEN);
+  dw1000_SetBit(sys_config, DW1000_SYS_CFG_RXAUTR, val);
+  dw1000_WriteData(dw1000, DW1000_SYS_CFG, sys_config, DW1000_SYS_CFG_LEN);
+}
+
+uint16_t dw1000_GetDataReceivedLength(dw1000_HandleTypeDef *dw1000, uint8_t use_crc) {
+  uint16_t n;
+  uint8_t rx_frame_info[DW1000_RX_FINFO_LEN];
+  dw1000_ReadData(dw1000, DW1000_RX_FINFO, rx_frame_info, DW1000_RX_FINFO_LEN);
+  n = ((rx_frame_info[1] & 0x03) << 8) | rx_frame_info[0];
+  if(use_crc && n>2)
+    n-=2;
+  return n;
+}
+
+void dw1000_GetDataReceived(dw1000_HandleTypeDef *dw1000, uint8_t* data, uint16_t length) {
+  dw1000_ReadData(dw1000, DW1000_RX_BUFFER, data, length);
+}
