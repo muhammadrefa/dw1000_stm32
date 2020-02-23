@@ -1,6 +1,8 @@
 #ifndef DW1000_TIME_H_
 #define DW1000_TIME_H_
 
+#include <stdint.h>
+
 typedef uint64_t dw1000_timestamp_t;
 
 const double DW1000_TIME_RES = 0.000015650040064103f;
