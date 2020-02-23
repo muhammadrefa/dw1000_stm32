@@ -12,11 +12,20 @@ void dw1000_SetBit(uint8_t *data, uint8_t bitnum, uint8_t value) {
   if(value) {
     *(data+(bitnum / 8)) |= (1 << bitnum);
   }
-  else
-  {
+  else {
     *(data+(bitnum / 8)) &= ~(1 << bitnum);
   }
 };
+
+uint8_t dw1000_IsSet(uint8_t *data, uint8_t bitnum) {
+  if(*(data+(bitnum / 8))) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
+  
+}
 
 dw1000_dev_id_t dw1000_GetDevID(dw1000_HandleTypeDef *dw1000) {
   dw1000_dev_id_t dev_id;
@@ -173,6 +182,12 @@ void dw1000_ReceiveAutoEnable(dw1000_HandleTypeDef *dw1000, uint8_t val) {
   dw1000_ReadData(dw1000, DW1000_SYS_CFG, sys_config, DW1000_SYS_CFG_LEN);
   dw1000_SetBit(sys_config, DW1000_SYS_CFG_RXAUTR, val);
   dw1000_WriteData(dw1000, DW1000_SYS_CFG, sys_config, DW1000_SYS_CFG_LEN);
+}
+
+uint8_t dw1000_ReceiveDataFrameReady(dw1000_HandleTypeDef *dw1000) {
+  uint8_t sys_status[DW1000_SYS_STATUS_LEN];
+  dw1000_ReadData(dw1000, DW1000_SYS_STATUS, sys_status, DW1000_SYS_STATUS_LEN);
+  return dw1000_IsSet(sys_status, DW1000_SYS_STATUS_RXDFR);
 }
 
 uint16_t dw1000_GetDataReceivedLength(dw1000_HandleTypeDef *dw1000, uint8_t use_crc) {

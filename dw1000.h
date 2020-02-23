@@ -3,7 +3,6 @@
  *
  *  Created on: 11 Feb 2020
  *      Author: refa
- *
  */
 
 #ifndef DW1000_H_
@@ -92,32 +91,6 @@
 #define DW1000_PSMC 0x36
 #define DW1000_PSMC_LEN 48
 
-typedef struct {
-  SPI_HandleTypeDef *spi;
-  GPIO_TypeDef *ss_port;
-  uint16_t ss_pin;
-} dw1000_HandleTypeDef;
-
-typedef struct {
-  uint8_t rev;
-  uint8_t ver;
-  uint8_t model;
-  uint16_t ridtag;
-} dw1000_dev_id_t;
-
-typedef struct {
-  uint16_t pan_id;
-  uint16_t short_addr;
-} dw1000_pan_addr_t;
-
-typedef struct {
-  uint8_t tx_chan;
-  uint8_t rx_chan;
-  dw1000_prf_t prf;
-  uint8_t tx_preamble;
-  uint8_t rx_preamble
-} dw1000_channel_t;
-
 typedef enum {
   DW1000_SYS_CTRL_SFCST = 0,
   DW1000_SYS_CTRL_TXSTRT = 1,
@@ -198,7 +171,34 @@ typedef enum {
   DW1000_PRF_64MHZ = 0b10
 } dw1000_prf_t;
 
+typedef struct {
+  SPI_HandleTypeDef *spi;
+  GPIO_TypeDef *ss_port;
+  uint16_t ss_pin;
+} dw1000_HandleTypeDef;
+
+typedef struct {
+  uint8_t rev;
+  uint8_t ver;
+  uint8_t model;
+  uint16_t ridtag;
+} dw1000_dev_id_t;
+
+typedef struct {
+  uint16_t pan_id;
+  uint16_t short_addr;
+} dw1000_pan_addr_t;
+
+typedef struct {
+  uint8_t tx_chan;
+  uint8_t rx_chan;
+  dw1000_prf_t prf;
+  uint8_t tx_preamble;
+  uint8_t rx_preamble;
+} dw1000_channel_t;
+
 void dw1000_SetBit(uint8_t *data, uint8_t bitnum, uint8_t value);
+uint8_t dw1000_IsSet(uint8_t *data, uint8_t bitnum);
 
 void dw1000_WriteData(dw1000_HandleTypeDef *dw1000, uint8_t reg, uint8_t *data, uint8_t len);
 void dw1000_ReadData(dw1000_HandleTypeDef *dw1000, uint8_t reg, uint8_t *data, uint8_t len);
@@ -220,9 +220,10 @@ void dw1000_ClearTransmitStatus(dw1000_HandleTypeDef *dw1000);
 void dw1000_StartReceive(dw1000_HandleTypeDef *dw1000, uint8_t use_crc);
 void dw1000_ClearReceiveStatus(dw1000_HandleTypeDef *dw1000);
 void dw1000_ReceiveAutoEnable(dw1000_HandleTypeDef *dw1000, uint8_t val);
+uint8_t dw1000_ReceiveDataFrameReady(dw1000_HandleTypeDef *dw1000);
 
 void dw1000_SetDataToTransmit(dw1000_HandleTypeDef *dw1000, uint8_t *data, uint16_t length, uint8_t use_crc);
 uint16_t dw1000_GetDataReceivedLength(dw1000_HandleTypeDef *dw1000, uint8_t use_crc);
-void dw1000_GetDataReceived(dw1000_HandleTypeDef *dw1000, uint8_t* data, uint8_t use_crc);
+void dw1000_GetDataReceived(dw1000_HandleTypeDef *dw1000, uint8_t* data, uint16_t length);
 
 #endif /* DW1000_H_ */
